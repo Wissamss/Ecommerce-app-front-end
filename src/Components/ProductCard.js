@@ -25,6 +25,7 @@ const ProductCard = ({ product, isAdmin, onDelete}) => {
       <p>Price: ${product.price}</p>
       {isAdmin ? ( 
         <div>
+          <p>Quantity: {product.quantity}</p>
           <Link to={`/edit/${product.id}`}>
             <button>Edit</button>
           </Link>
