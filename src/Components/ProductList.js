@@ -5,13 +5,16 @@ import ProductService from '../Services/ProductService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faShoppingCart, faUsers, faBox, faClipboardList, faUserCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import userImage from '../images/profile.png'; // Remplacez cela par le chemin réel de votre image utilisateur
+import CartService from '../Services/CartService';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const userRole = localStorage.getItem("role");
+  const [cartID, setCartID] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const userName = userRole === 'ADMIN' ? 'Fatima Zahra' : 'Wissam Saidi';
+  const userID = localStorage.getItem('userID');
 
   const categories = ['All', 'Clothes', 'Jewelery', 'Beauty'];
 
@@ -27,6 +30,16 @@ const ProductList = () => {
 
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    const fetchCartID = async () => {
+      const cart = await CartService.GetByCustomerID(userID);
+      setCartID(cart.id);
+    };
+
+    fetchCartID();
+  }, [userID]);
+
 
   const handleDelete = async (productID) => {
     try {
@@ -73,7 +86,7 @@ const ProductList = () => {
   ) : (
     <>
       <Link to="/products" style={styles.menuItem}><FontAwesomeIcon icon={faBox} style={styles.menuIcon} /> Products</Link>
-      <Link to="/cart" style={styles.menuItem}><FontAwesomeIcon icon={faShoppingCart} style={styles.menuIcon} /> Cart</Link>
+      <Link to={`/cart/${cartID}`} style={styles.menuItem}><FontAwesomeIcon icon={faShoppingCart} style={styles.menuIcon} /> Cart</Link>
       <Link to="/orders" style={styles.menuItem}><FontAwesomeIcon icon={faClipboardList} style={styles.menuIcon} /> Orders</Link>
       <Link to="/profile" style={styles.menuItem}><FontAwesomeIcon icon={faUserCircle} style={styles.menuIcon} /> Profile</Link>
       <Link to="/logout" style={styles.menuItem}><FontAwesomeIcon icon={faSignOutAlt} style={styles.menuIcon} /> Logout</Link>
